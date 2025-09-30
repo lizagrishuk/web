@@ -1,19 +1,16 @@
 body { font-family: Arial, sans-serif; margin: 0; padding: 10px; }
-
 .catalog {
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
   margin-top: 20px;
 }
-
 .product {
   border: 1px solid #ccc;
   padding: 10px;
   width: 200px;
   box-sizing: border-box;
 }
-
 button {
   cursor: pointer;
   background-color: #4c7cba;
@@ -23,12 +20,10 @@ button {
   width: 100%;
   border-radius: 4px;
 }
-
 .order-form {
   margin-top: 30px;
   max-width: 400px;
 }
-
 .order-form input, button {
   display: block;
   width: 100%;
