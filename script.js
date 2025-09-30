@@ -7,6 +7,27 @@ function renderCart() {
   for (const id in cart) {
     const li = document.createElement('li');
     li.textContent = `${id} — ${cart[id]} шт`;
+
+    const btnPlus = document.createElement('button');
+    btnPlus.textContent = '+';
+    btnPlus.onclick = () => {
+      cart[id]++;
+      updateCartDisplay();
+    };
+
+    const btnMinus = document.createElement('button');
+    btnMinus.textContent = '-';
+    btnMinus.onclick = () => {
+      if (cart[id] > 1) {
+        cart[id]--;
+      } else {
+        delete cart[id];
+      }
+      updateCartDisplay();
+    };
+
+    li.appendChild(btnPlus);
+    li.appendChild(btnMinus);
     cartItems.appendChild(li);
   }
 }
@@ -41,3 +62,4 @@ document.getElementById('orderForm').addEventListener('submit', e => {
   cart = {};
   updateCartDisplay();
 });
+
