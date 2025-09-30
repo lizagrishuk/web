@@ -1,17 +1,23 @@
-// Начальное кол-во торваров
 let cartCount = 0;
+let totalPrice = 0;
+const prices = [1000, 2000]; // Цены товаров 1 и 2
 
-// Добавляем обработчик на каждую кнопку "Добавить в корзину"
-document.querySelectorAll('.btn-add').forEach(button => {
+function updateCartDisplay() {
+  document.getElementById('cartCount').textContent = 'Товаров в корзине: ' + cartCount;
+  document.getElementById('cartTotal').textContent = 'Итого: ' + totalPrice + ' ₽';
+}
+
+document.querySelectorAll('.btn-add').forEach((button, index) => {
   button.addEventListener('click', () => {
     cartCount++;
+    totalPrice += prices[index];
+    updateCartDisplay();
     alert('Товар добавлен в корзину. Сейчас в корзине: ' + cartCount);
   });
 });
 
-// Обработка отправки формы заказа
 document.getElementById('orderForm').addEventListener('submit', e => {
-  e.preventDefault(); // Отменяем стандартное поведение формы
+  e.preventDefault();
 
   if (cartCount === 0) {
     alert('Корзина пуста. Добавьте хотя бы один товар.');
@@ -19,5 +25,8 @@ document.getElementById('orderForm').addEventListener('submit', e => {
   }
 
   document.getElementById('orderMessage').textContent = 'Заказ создан!';
-  cartCount = 0;  // Очистка корзины
+  cartCount = 0;
+  totalPrice = 0;
+  updateCartDisplay();
 });
+
