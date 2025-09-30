@@ -1,6 +1,19 @@
 const prices = [1000, 2000];
 let cart = {};
 
+// Загрузка корзины
+function loadCart() {
+  const savedCart = localStorage.getItem('cart');
+  if (savedCart) {
+    cart = JSON.parse(savedCart);
+  }
+}
+
+// Сохранение корзины
+function saveCart() {
+  localStorage.setItem('cart', JSON.stringify(cart));
+}
+
 function renderCart() {
   const cartItems = document.getElementById('cartItems');
   cartItems.innerHTML = '';
@@ -12,6 +25,7 @@ function renderCart() {
     btnPlus.textContent = '+';
     btnPlus.onclick = () => {
       cart[id]++;
+      saveCart();
       updateCartDisplay();
     };
 
@@ -23,6 +37,7 @@ function renderCart() {
       } else {
         delete cart[id];
       }
+      saveCart();
       updateCartDisplay();
     };
 
@@ -48,6 +63,7 @@ document.querySelectorAll('.btn-add').forEach((btn, index) => {
   btn.addEventListener('click', () => {
     const id = 'product-' + (index + 1);
     cart[id] = (cart[id] || 0) + 1;
+    saveCart();
     updateCartDisplay();
   });
 });
@@ -60,6 +76,9 @@ document.getElementById('orderForm').addEventListener('submit', e => {
   }
   alert('Заказ создан!');
   cart = {};
+  saveCart();
   updateCartDisplay();
 });
 
+loadCart();
+updateCartDisplay();
