@@ -1,7 +1,6 @@
 const prices = [1000, 2000];
 let cart = {};
 
-// Загрузка корзины
 function loadCart() {
   const savedCart = localStorage.getItem('cart');
   if (savedCart) {
