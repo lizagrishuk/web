@@ -1,23 +1,19 @@
-// создание контейнера приложения 
-const app = document.createElement('div');
+// создание контейнера приложения с семантикой
+const app = document.createElement('main');
 app.id = 'app';
 document.body.appendChild(app);
 
-// создание заголовка
+// заголовок
 const header = document.createElement('h1');
 header.textContent = 'ToDo App';
 app.appendChild(header);
 
-// список задач
-const taskList = document.createElement('div');
-taskList.id = 'task-list';
-app.appendChild(taskList);
-
-// форма для добавления новой задачи
+// форма для добавления задач
 const form = document.createElement('form');
 
 const input = document.createElement('input');
 input.placeholder = 'Новая задача';
+input.type = 'text';
 
 const addBtn = document.createElement('button');
 addBtn.textContent = 'Добавить';
@@ -25,131 +21,140 @@ addBtn.textContent = 'Добавить';
 form.append(input, addBtn);
 app.appendChild(form);
 
-// создание массива для хранения задач
+// контейнер задач
+const taskList = document.createElement('section');
+taskList.id = 'task-list';
+app.appendChild(taskList);
+
+// фильтры и сортировка
+const controls = document.createElement('div');
+controls.className = 'filters';
+
+const filterAllBtn = document.createElement('button');
+filterAllBtn.textContent = 'Все';
+const filterCompletedBtn = document.createElement('button');
+filterCompletedBtn.textContent = 'Выполненные';
+const filterPendingBtn = document.createElement('button');
+filterPendingBtn.textContent = 'Невыполненные';
+const sortBtn = document.createElement('button');
+sortBtn.textContent = 'Сортировать по дате';
+
+controls.append(filterAllBtn, filterCompletedBtn, filterPendingBtn, sortBtn);
+app.appendChild(controls);
+
+// поиск задач
+const searchInput = document.createElement('input');
+searchInput.placeholder = 'Поиск задач...';
+app.appendChild(searchInput);
+
+// массив задач
 let tasks = [];
 
-// функция сохранения задач в localStorage 
+// сохранение в localStorage
 function saveTasks() {
   localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
-// восстанавление задачи при загрузке
+// восстановление
 const savedTasks = localStorage.getItem('tasks');
 if (savedTasks) {
   tasks = JSON.parse(savedTasks);
   renderAllTasks();
 }
 
-// функция рендера одной задачи
+// рендер одной задачи
 function renderTask(task) {
   const taskDiv = document.createElement('div');
+  taskDiv.className = 'task';
   taskDiv.textContent = task.text;
+  taskDiv.draggable = true;
 
-  // кнопка "Удалить"
   const deleteBtn = document.createElement('button');
   deleteBtn.textContent = 'Удалить';
   taskDiv.appendChild(deleteBtn);
 
-  deleteBtn.addEventListener('click', () => {
+  // событие удаления
+  deleteBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
     tasks = tasks.filter(t => t !== task);
     renderAllTasks();
     saveTasks();
   });
 
-  // редактирование по двойному клику
+  // редактирование
   taskDiv.addEventListener('dblclick', () => {
     const newText = prompt('Редактировать задачу', task.text);
-    if(newText) task.text = newText;
+    if (newText) task.text = newText;
     renderAllTasks();
     saveTasks();
   });
 
-  // отметка выполненной задачи по клику
-  taskDiv.addEventListener('click', (e) => {
-    if(e.target !== deleteBtn) {
-      task.completed = !task.completed;
-      taskDiv.classList.toggle('completed');
-      saveTasks();
-    }
+  // отметка выполненной
+  taskDiv.addEventListener('click', () => {
+    task.completed = !task.completed;
+    renderAllTasks();
+    saveTasks();
   });
 
-  // если задача выполнена, добавляем класс
   if(task.completed) taskDiv.classList.add('completed');
+
+  // drag-and-drop
+  taskDiv.addEventListener('dragstart', e => {
+    e.dataTransfer.setData('text/plain', tasks.indexOf(task));
+  });
+
+  taskDiv.addEventListener('dragover', e => e.preventDefault());
+
+  taskDiv.addEventListener('drop', e => {
+    e.preventDefault();
+    const fromIndex = +e.dataTransfer.getData('text/plain');
+    const toIndex = tasks.indexOf(task);
+    const [movedTask] = tasks.splice(fromIndex, 1);
+    tasks.splice(toIndex, 0, movedTask);
+    renderAllTasks();
+    saveTasks();
+  });
 
   taskList.appendChild(taskDiv);
 }
 
-//  функция рендера всего списка
+// рендер всех задач
 function renderAllTasks() {
   taskList.innerHTML = '';
   tasks.forEach(renderTask);
 }
 
-// добавление новой задачи 
-addBtn.addEventListener('click', (e) => {
+// добавление новой задачи
+addBtn.addEventListener('click', e => {
   e.preventDefault();
   if(!input.value) return;
-
-  const newTask = {
-    text: input.value,
-    date: new Date(),
-    completed: false
-  };
-
+  const newTask = { text: input.value, date: new Date(), completed: false };
   tasks.push(newTask);
   renderAllTasks();
   saveTasks();
   input.value = '';
 });
 
-// кнопка сортировки по дате
-const sortBtn = document.createElement('button');
-sortBtn.textContent = 'Сортировать по дате';
-app.appendChild(sortBtn);
-
-sortBtn.addEventListener('click', () => {
-  tasks.sort((a, b) => a.date - b.date);
-  renderAllTasks();
-});
-
-// фильтры 
-const filterAllBtn = document.createElement('button');
-filterAllBtn.textContent = 'Все';
-
-const filterCompletedBtn = document.createElement('button');
-filterCompletedBtn.textContent = 'Выполненные';
-
-const filterPendingBtn = document.createElement('button');
-filterPendingBtn.textContent = 'Невыполненные';
-
-app.append(filterAllBtn, filterCompletedBtn, filterPendingBtn);
-
-// показать все задачи
-filterAllBtn.addEventListener('click', () => {
-  renderAllTasks();
-});
-
-// показать только выполненные
+// фильтры
+filterAllBtn.addEventListener('click', renderAllTasks);
 filterCompletedBtn.addEventListener('click', () => {
   taskList.innerHTML = '';
-  tasks.filter(task => task.completed).forEach(renderTask);
+  tasks.filter(t => t.completed).forEach(renderTask);
 });
-
-// показать только невыполненные
 filterPendingBtn.addEventListener('click', () => {
   taskList.innerHTML = '';
-  tasks.filter(task => !task.completed).forEach(renderTask);
+  tasks.filter(t => !t.completed).forEach(renderTask);
 });
 
-// поиск задач по названию 
-const searchInput = document.createElement('input');
-searchInput.placeholder = 'Поиск задач...';
-app.appendChild(searchInput);
+// сортировка
+sortBtn.addEventListener('click', () => {
+  tasks.sort((a,b) => a.date - b.date);
+  renderAllTasks();
+});
 
+// поиск
 searchInput.addEventListener('input', () => {
   const term = searchInput.value.toLowerCase();
   taskList.innerHTML = '';
-  tasks
-    .filter(task => task.text.toLowerCase().includes(term))
-    .forEach(renderTask);
+  tasks.filter(task => task.text.toLowerCase().includes(term)).forEach(renderTask);
 });
