@@ -44,6 +44,12 @@ addBtn.addEventListener('click', (e) => {
     if (newText) task.firstChild.textContent = newText;
   });
 
+  // отметка 'выполнено'
+  task.addEventListener('click', () => {
+  task.classList.toggle('completed');
+  });
+
+
   taskList.appendChild(task);
   
   input.value = '';
