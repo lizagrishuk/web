@@ -9,3 +9,14 @@ app.appendChild(header);
 const taskList = document.createElement('div');
 taskList.id = 'task-list';
 app.appendChild(taskList);
+
+const form = document.createElement('form');
+
+const input = document.createElement('input');
+input.placeholder = 'Новая задача';
+
+const addBtn = document.createElement('button');
+addBtn.textContent = 'Добавить';
+
+form.append(input, addBtn);
+app.appendChild(form);
