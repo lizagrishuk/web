@@ -20,3 +20,14 @@ addBtn.textContent = 'Добавить';
 
 form.append(input, addBtn);
 app.appendChild(form);
+
+addBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+  if (!input.value) return;
+  
+  const task = document.createElement('div');
+  task.textContent = input.value;
+  taskList.appendChild(task);
+  
+  input.value = '';
+});
