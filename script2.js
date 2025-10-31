@@ -27,6 +27,17 @@ addBtn.addEventListener('click', (e) => {
   
   const task = document.createElement('div');
   task.textContent = input.value;
+
+  // добавляем кнопку "Удалить" внутрь задачи
+  const deleteBtn = document.createElement('button');
+  deleteBtn.textContent = 'Удалить';
+  task.appendChild(deleteBtn);
+
+  // событие для кнопки "Удалить"
+  deleteBtn.addEventListener('click', () => {
+    taskList.removeChild(task);
+  });
+  
   taskList.appendChild(task);
   
   input.value = '';
