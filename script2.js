@@ -84,6 +84,38 @@ const sortBtn = document.createElement('button');
 sortBtn.textContent = 'Сортировать по дате';
 app.appendChild(sortBtn);
 
+// РАБОТА С ФИЛЬТРАМИ
+
+// создаем кнопки фильтров
+const filterAllBtn = document.createElement('button');
+filterAllBtn.textContent = 'Все';
+
+const filterCompletedBtn = document.createElement('button');
+filterCompletedBtn.textContent = 'Выполненные';
+
+const filterPendingBtn = document.createElement('button');
+filterPendingBtn.textContent = 'Невыполненные';
+
+// добавляем кнопки на страницу под кнопкой сортировки
+app.append(filterAllBtn, filterCompletedBtn, filterPendingBtn);
+
+// показать все задачи
+filterAllBtn.addEventListener('click', () => {
+  renderAllTasks(); // просто рендерим весь массив задач
+});
+
+// показать только выполненные задачи
+filterCompletedBtn.addEventListener('click', () => {
+  taskList.innerHTML = ''; // очищаем контейнер перед фильтром
+  tasks.filter(task => task.completed).forEach(renderTask);
+});
+
+// показать только невыполненные задачи
+filterPendingBtn.addEventListener('click', () => {
+  taskList.innerHTML = ''; // очищаем контейнер перед фильтром
+  tasks.filter(task => !task.completed).forEach(renderTask);
+});
+
 sortBtn.addEventListener('click', () => {
   // сортируем массив по дате
   tasks.sort((a, b) => a.date - b.date);
