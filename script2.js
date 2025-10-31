@@ -28,6 +28,18 @@ app.appendChild(form);
 // создание массива для хранения задач
 let tasks = [];
 
+// функция сохранения задач в localStorage 
+function saveTasks() {
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+
+// восстанавление задачи при загрузке
+const savedTasks = localStorage.getItem('tasks');
+if (savedTasks) {
+  tasks = JSON.parse(savedTasks);
+  renderAllTasks();
+}
+
 // функция рендера одной задачи
 function renderTask(task) {
   const taskDiv = document.createElement('div');
@@ -41,6 +53,7 @@ function renderTask(task) {
   deleteBtn.addEventListener('click', () => {
     tasks = tasks.filter(t => t !== task);
     renderAllTasks();
+    saveTasks();
   });
 
   // редактирование по двойному клику
@@ -48,6 +61,7 @@ function renderTask(task) {
     const newText = prompt('Редактировать задачу', task.text);
     if(newText) task.text = newText;
     renderAllTasks();
+    saveTasks();
   });
 
   // отметка выполненной задачи по клику
@@ -55,6 +69,7 @@ function renderTask(task) {
     if(e.target !== deleteBtn) {
       task.completed = !task.completed;
       taskDiv.classList.toggle('completed');
+      saveTasks();
     }
   });
 
@@ -83,6 +98,7 @@ addBtn.addEventListener('click', (e) => {
 
   tasks.push(newTask);
   renderAllTasks();
+  saveTasks();
   input.value = '';
 });
 
