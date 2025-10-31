@@ -21,44 +21,71 @@ addBtn.textContent = 'Добавить';
 form.append(input, addBtn);
 app.appendChild(form);
 
-// создаем массив для хранения задач
+// создаем массив для хранения задач с датой 
 let tasks = [];
 
+// функция рендера всех задач (нужна для сортировки) 
+function renderAllTasks() {
+  taskList.innerHTML = ''; // очищаем контейнер перед перерисовкой
+  tasks.forEach(task => {
+    const taskDiv = document.createElement('div');
+    taskDiv.textContent = task.text;
+
+    // кнопка "Удалить"
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = 'Удалить';
+    taskDiv.appendChild(deleteBtn);
+    deleteBtn.addEventListener('click', () => {
+      tasks = tasks.filter(t => t !== task); // удаляем из массива
+      renderAllTasks(); // перерисовываем список
+    });
+
+    // редактирование по двойному клику
+    taskDiv.addEventListener('dblclick', () => {
+      const newText = prompt('Редактировать задачу', task.text);
+      if(newText) task.text = newText;
+      renderAllTasks(); // перерисовываем список
+    });
+
+    // отметка выполненной задачи по клику
+    taskDiv.addEventListener('click', (e) => {
+      if(e.target !== deleteBtn) {
+        task.completed = !task.completed;
+        taskDiv.classList.toggle('completed');
+      }
+    });
+
+    // если задача уже выполнена, добавляем класс
+    if(task.completed) taskDiv.classList.add('completed');
+
+    taskList.appendChild(taskDiv);
+  });
+}
+
+// обработка добавления новой задачи 
 addBtn.addEventListener('click', (e) => {
   e.preventDefault();
-  if (!input.value) return;
-  
-  const task = document.createElement('div');
-  task.textContent = input.value;
+  if(!input.value) return;
 
-  // добавляем кнопку "Удалить" внутрь задачи
-  const deleteBtn = document.createElement('button');
-  deleteBtn.textContent = 'Удалить';
-  task.appendChild(deleteBtn);
+  // создаем объект задачи с текстом и датой
+  const newTask = {
+    text: input.value,
+    date: new Date(), // текущая дата для сортировки
+    completed: false
+  };
 
-  // событие для кнопки "Удалить"
-  deleteBtn.addEventListener('click', () => {
-    taskList.removeChild(task);
-  });
-
-  // редактирование задачи по двойному клику
-  task.addEventListener('dblclick', () => {
-    const newText = prompt('Редактировать задачу', task.firstChild.textContent);
-    if (newText) task.firstChild.textContent = newText;
-  });
-
-  // отметка 'выполнено'
-  task.addEventListener('click', () => {
-  task.classList.toggle('completed');
-  });
-
-
-  taskList.appendChild(task);
-  
-  input.value = '';
+  tasks.push(newTask); // добавляем в массив
+  renderAllTasks();    // рендерим весь список заново
+  input.value = '';    // очищаем поле ввода
 });
 
 // создаем кнопку сортировки по дате
 const sortBtn = document.createElement('button');
 sortBtn.textContent = 'Сортировать по дате';
 app.appendChild(sortBtn);
+
+sortBtn.addEventListener('click', () => {
+  // сортируем массив по дате
+  tasks.sort((a, b) => a.date - b.date);
+  renderAllTasks(); // перерисовываем список после сортировки
+});
