@@ -21,6 +21,9 @@ addBtn.textContent = 'Добавить';
 form.append(input, addBtn);
 app.appendChild(form);
 
+// создаем массив для хранения задач
+let tasks = [];
+
 addBtn.addEventListener('click', (e) => {
   e.preventDefault();
   if (!input.value) return;
@@ -54,3 +57,8 @@ addBtn.addEventListener('click', (e) => {
   
   input.value = '';
 });
+
+// создаем кнопку сортировки по дате
+const sortBtn = document.createElement('button');
+sortBtn.textContent = 'Сортировать по дате';
+app.appendChild(sortBtn);
