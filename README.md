@@ -22,4 +22,5 @@
 - JavaScript (DOM API, LocalStorage, drag-and-drop)
 
 ## Ссылка на работу
+https://lizagrishuk.github.io/web/
 
