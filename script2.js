@@ -37,7 +37,13 @@ addBtn.addEventListener('click', (e) => {
   deleteBtn.addEventListener('click', () => {
     taskList.removeChild(task);
   });
-  
+
+  // редактирование задачи по двойному клику
+  task.addEventListener('dblclick', () => {
+    const newText = prompt('Редактировать задачу', task.firstChild.textContent);
+    if (newText) task.firstChild.textContent = newText;
+  });
+
   taskList.appendChild(task);
   
   input.value = '';
