@@ -1,19 +1,19 @@
-// --- Создание контейнера приложения ---
+// создание контейнера приложения 
 const app = document.createElement('div');
 app.id = 'app';
 document.body.appendChild(app);
 
-// --- Заголовок ---
+// создание заголовка
 const header = document.createElement('h1');
 header.textContent = 'ToDo App';
 app.appendChild(header);
 
-// --- Список задач ---
+// список задач
 const taskList = document.createElement('div');
 taskList.id = 'task-list';
 app.appendChild(taskList);
 
-// --- Форма добавления новой задачи ---
+// форма для добавления новой задачи
 const form = document.createElement('form');
 
 const input = document.createElement('input');
@@ -25,10 +25,10 @@ addBtn.textContent = 'Добавить';
 form.append(input, addBtn);
 app.appendChild(form);
 
-// --- Массив для хранения задач ---
+// создание массива для хранения задач
 let tasks = [];
 
-// --- Функция рендера одной задачи ---
+// функция рендера одной задачи
 function renderTask(task) {
   const taskDiv = document.createElement('div');
   taskDiv.textContent = task.text;
@@ -64,13 +64,13 @@ function renderTask(task) {
   taskList.appendChild(taskDiv);
 }
 
-// --- Функция рендера всего списка ---
+//  функция рендера всего списка
 function renderAllTasks() {
   taskList.innerHTML = '';
   tasks.forEach(renderTask);
 }
 
-// --- Обработчик добавления новой задачи ---
+// добавление новой задачи 
 addBtn.addEventListener('click', (e) => {
   e.preventDefault();
   if(!input.value) return;
@@ -86,7 +86,7 @@ addBtn.addEventListener('click', (e) => {
   input.value = '';
 });
 
-// --- Кнопка сортировки по дате ---
+// кнопка сортировки по дате
 const sortBtn = document.createElement('button');
 sortBtn.textContent = 'Сортировать по дате';
 app.appendChild(sortBtn);
@@ -96,7 +96,7 @@ sortBtn.addEventListener('click', () => {
   renderAllTasks();
 });
 
-// --- Фильтры ---
+// фильтры 
 const filterAllBtn = document.createElement('button');
 filterAllBtn.textContent = 'Все';
 
@@ -125,7 +125,7 @@ filterPendingBtn.addEventListener('click', () => {
   tasks.filter(task => !task.completed).forEach(renderTask);
 });
 
-// --- Поиск по названию ---
+// поиск задач по названию 
 const searchInput = document.createElement('input');
 searchInput.placeholder = 'Поиск задач...';
 app.appendChild(searchInput);
