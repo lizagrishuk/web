@@ -45,6 +45,7 @@ app.appendChild(controls);
 // поиск задач
 const searchInput = document.createElement('input');
 searchInput.placeholder = 'Поиск задач...';
+searchInput.type = 'search';
 app.appendChild(searchInput);
 
 // массив задач
@@ -60,6 +61,36 @@ const savedTasks = localStorage.getItem('tasks');
 if (savedTasks) {
   tasks = JSON.parse(savedTasks);
   renderAllTasks();
+}
+
+// функция модального окна для редактирования
+function showEditModal(oldText, callback) {
+  const overlay = document.createElement("div");
+  overlay.className = "modal-overlay";
+
+  overlay.innerHTML = `
+    <div class="modal-window">
+      <h3>Редактировать задачу</h3>
+      <input type="text" class="modal-input" value="${oldText}">
+      <div class="modal-buttons">
+        <button class="save-btn">Сохранить</button>
+        <button class="cancel-btn">Отмена</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  const input = overlay.querySelector(".modal-input");
+
+  overlay.querySelector(".save-btn").onclick = () => {
+    callback(input.value.trim());
+    overlay.remove();
+  };
+
+  overlay.querySelector(".cancel-btn").onclick = () => {
+    overlay.remove();
+  };
 }
 
 // рендер одной задачи
@@ -81,12 +112,15 @@ function renderTask(task) {
     saveTasks();
   });
 
-  // редактирование
+  // редактирование (модальное окно)
   taskDiv.addEventListener('dblclick', () => {
-    const newText = prompt('Редактировать задачу', task.text);
-    if (newText) task.text = newText;
-    renderAllTasks();
-    saveTasks();
+    showEditModal(task.text, (newText) => {
+      if (newText) {
+        task.text = newText;
+        renderAllTasks();
+        saveTasks();
+      }
+    });
   });
 
   // отметка выполненной
