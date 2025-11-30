@@ -43,7 +43,32 @@ header {
     justify-content: center;
     align-items: center;
     font-size: 30px;
-    transition: 0.15s all;
+    transition: all 0.2s ease;
+}
+
+/* Цвета плиток по значению */
+.cell[data-value="2"] { background: #eee4da; color: #776e65; }
+.cell[data-value="4"] { background: #ede0c8; color: #776e65; }
+.cell[data-value="8"] { background: #f2b179; color: #f9f6f2; }
+.cell[data-value="16"] { background: #f59563; color: #f9f6f2; }
+.cell[data-value="32"] { background: #f67c5f; color: #f9f6f2; }
+.cell[data-value="64"] { background: #f65e3b; color: #f9f6f2; }
+.cell[data-value="128"] { background: #edcf72; color: #f9f6f2; }
+.cell[data-value="256"] { background: #edcc61; color: #f9f6f2; }
+.cell[data-value="512"] { background: #edc850; color: #f9f6f2; }
+.cell[data-value="1024"] { background: #edc53f; color: #f9f6f2; }
+.cell[data-value="2048"] { background: #edc22e; color: #f9f6f2; }
+
+/* Анимация слияния плиток */
+.cell.merge {
+    transform: scale(1.2);
+    animation: mergeAnim 0.2s ease forwards;
+}
+
+@keyframes mergeAnim {
+    0% { transform: scale(1.2); }
+    50% { transform: scale(1); }
+    100% { transform: scale(1); }
 }
 
 .modal {

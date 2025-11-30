@@ -30,13 +30,20 @@ function drawBoard() {
         for (let c = 0; c < size; c++) {
             const cell = document.createElement("div");
             cell.classList.add("cell");
-            if (matrix[r][c] !== 0) cell.textContent = matrix[r][c];
+            if (matrix[r][c] !== 0) {
+                cell.textContent = matrix[r][c];
+                cell.setAttribute("data-value", matrix[r][c]); // добавляем атрибут для цветов
+                // Если плитка только что слилась
+                if (matrix[r][c + 1] === 0 || matrix[r + 1]?.[c] === 0) {
+                    cell.classList.add("merge");
+                    setTimeout(() => cell.classList.remove("merge"), 200);
+                }
+            }
             board.appendChild(cell);
         }
     }
     scoreEl.textContent = score;
 
-    // Проверка окончания игры
     if (checkGameOver()) {
         gameOverModal.classList.remove("hidden");
     }
