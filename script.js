@@ -63,32 +63,51 @@ if (savedTasks) {
   renderAllTasks();
 }
 
+// функция очистки контейнера задач
+function clearTasks() {
+  while (taskList.firstChild) {
+    taskList.removeChild(taskList.firstChild);
+  }
+}
+
 // функция модального окна для редактирования
 function showEditModal(oldText, callback) {
   const overlay = document.createElement("div");
   overlay.className = "modal-overlay";
 
-  overlay.innerHTML = `
-    <div class="modal-window">
-      <h3>Редактировать задачу</h3>
-      <input type="text" class="modal-input" value="${oldText}">
-      <div class="modal-buttons">
-        <button class="save-btn">Сохранить</button>
-        <button class="cancel-btn">Отмена</button>
-      </div>
-    </div>
-  `;
+  const modalWindow = document.createElement("div");
+  modalWindow.className = "modal-window";
 
+  const title = document.createElement("h3");
+  title.textContent = "Редактировать задачу";
+
+  const modalInput = document.createElement("input");
+  modalInput.type = "text";
+  modalInput.className = "modal-input";
+  modalInput.value = oldText;
+
+  const buttonsDiv = document.createElement("div");
+  buttonsDiv.className = "modal-buttons";
+
+  const saveBtn = document.createElement("button");
+  saveBtn.className = "save-btn";
+  saveBtn.textContent = "Сохранить";
+
+  const cancelBtn = document.createElement("button");
+  cancelBtn.className = "cancel-btn";
+  cancelBtn.textContent = "Отмена";
+
+  buttonsDiv.append(saveBtn, cancelBtn);
+  modalWindow.append(title, modalInput, buttonsDiv);
+  overlay.appendChild(modalWindow);
   document.body.appendChild(overlay);
 
-  const input = overlay.querySelector(".modal-input");
-
-  overlay.querySelector(".save-btn").onclick = () => {
-    callback(input.value.trim());
+  saveBtn.onclick = () => {
+    callback(modalInput.value.trim());
     overlay.remove();
   };
 
-  overlay.querySelector(".cancel-btn").onclick = () => {
+  cancelBtn.onclick = () => {
     overlay.remove();
   };
 }
@@ -154,7 +173,7 @@ function renderTask(task) {
 
 // рендер всех задач
 function renderAllTasks() {
-  taskList.innerHTML = '';
+  clearTasks();
   tasks.forEach(renderTask);
 }
 
@@ -172,23 +191,23 @@ addBtn.addEventListener('click', e => {
 // фильтры
 filterAllBtn.addEventListener('click', renderAllTasks);
 filterCompletedBtn.addEventListener('click', () => {
-  taskList.innerHTML = '';
+  clearTasks();
   tasks.filter(t => t.completed).forEach(renderTask);
 });
 filterPendingBtn.addEventListener('click', () => {
-  taskList.innerHTML = '';
+  clearTasks();
   tasks.filter(t => !t.completed).forEach(renderTask);
 });
 
 // сортировка
 sortBtn.addEventListener('click', () => {
-  tasks.sort((a,b) => a.date - b.date);
+  tasks.sort((a,b) => new Date(a.date) - new Date(b.date));
   renderAllTasks();
 });
 
 // поиск
 searchInput.addEventListener('input', () => {
   const term = searchInput.value.toLowerCase();
-  taskList.innerHTML = '';
+  clearTasks();
   tasks.filter(task => task.text.toLowerCase().includes(term)).forEach(renderTask);
 });
