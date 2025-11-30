@@ -20,7 +20,9 @@ const controls = document.getElementById("controls");
 const size = 4;
 let matrix = Array.from({ length: size }, () => Array(size).fill(0));
 let score = 0;
+let history = [];
 
+// Отрисовка игрового поля
 function drawBoard() {
     board.innerHTML = "";
     for (let r = 0; r < size; r++) {
@@ -31,7 +33,9 @@ function drawBoard() {
             board.appendChild(cell);
         }
     }
+    scoreEl.textContent = score;
 }
+
 // Появление плитки (2 или 4) в случайной пустой клетке
 function spawnTile() {
     let empty = [];
@@ -52,14 +56,43 @@ for (let i = 0; i < startTiles; i++) {
     spawnTile();
 }
 
+// Сохранение состояния для undo
+function saveState() {
+    history.push({
+        matrix: matrix.map(row => row.slice()),
+        score
+    });
+    if (history.length > 20) history.shift(); // храним максимум 20 состояний
+}
+
+// Движение влево
+function moveLeft() {
+    saveState();
+    let moved = false;
+    for (let r = 0; r < size; r++) {
+        let row = matrix[r].filter(val => val !== 0);
+        for (let i = 0; i < row.length - 1; i++) {
+            if (row[i] === row[i + 1]) {
+                row[i] *= 2;
+                score += row[i];
+                row[i + 1] = 0;
+                i++;
+            }
+        }
+        row = row.filter(val => val !== 0);
+        while (row.length < size) row.push(0);
+        if (matrix[r].some((v, idx) => v !== row[idx])) moved = true;
+        matrix[r] = row;
+    }
+    if (moved) spawnTile();
+    drawBoard();
+}
+
 // Отрисовать начальное состояние
 drawBoard();
 
-// Заглушки для будущих функций
-function moveLeft() {}
+// Заглушки для других направлений
 function moveRight() {}
 function moveUp() {}
 function moveDown() {}
-function saveState() {}
-function loadState() {}
 function checkGameOver() {}
