@@ -32,9 +32,30 @@ function drawBoard() {
         }
     }
 }
+// Появление плитки (2 или 4) в случайной пустой клетке
+function spawnTile() {
+    let empty = [];
+    for (let r = 0; r < size; r++) {
+        for (let c = 0; c < size; c++) {
+            if (matrix[r][c] === 0) empty.push({ r, c });
+        }
+    }
+    if (empty.length === 0) return;
 
-// Заглушки для следующих коммитов
-function spawnTile() {}
+    const pos = empty[Math.floor(Math.random() * empty.length)];
+    matrix[pos.r][pos.c] = Math.random() < 0.9 ? 2 : 4;
+}
+
+// Стартовые 2–3 плитки
+const startTiles = Math.floor(Math.random() * 2) + 2; // 2 или 3
+for (let i = 0; i < startTiles; i++) {
+    spawnTile();
+}
+
+// Отрисовать начальное состояние
+drawBoard();
+
+// Заглушки для будущих функций
 function moveLeft() {}
 function moveRight() {}
 function moveUp() {}
