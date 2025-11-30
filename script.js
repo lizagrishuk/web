@@ -21,6 +21,7 @@ const size = 4;
 let matrix = Array.from({ length: size }, () => Array(size).fill(0));
 let score = 0;
 let history = [];
+const startTiles = Math.floor(Math.random() * 2) + 2;
 
 // Отрисовка игрового поля
 function drawBoard() {
@@ -29,21 +30,19 @@ function drawBoard() {
         for (let c = 0; c < size; c++) {
             const cell = document.createElement("div");
             cell.classList.add("cell");
-            if (matrix[r][c] !== 0) {
-                cell.textContent = matrix[r][c];
-            }
+            if (matrix[r][c] !== 0) cell.textContent = matrix[r][c];
             board.appendChild(cell);
         }
     }
     scoreEl.textContent = score;
 
-    // Проверяем конец игры после каждого движения
+    // Проверка окончания игры
     if (checkGameOver()) {
         gameOverModal.classList.remove("hidden");
     }
 }
 
-// Создание новой плитки
+// Генерация новой плитки (2 или 4) в случайной пустой клетке
 function spawnTile() {
     let empty = [];
     for (let r = 0; r < size; r++) {
@@ -57,7 +56,6 @@ function spawnTile() {
 }
 
 // Генерация начальных плиток
-const startTiles = Math.floor(Math.random() * 2) + 2;
 for (let i = 0; i < startTiles; i++) spawnTile();
 
 // Сохраняем состояние для Undo
@@ -78,7 +76,7 @@ function undo() {
     drawBoard();
 }
 
-// Движения плиток
+// Движение плиток влево
 function moveLeft() {
     saveState();
     let moved = false;
@@ -101,6 +99,7 @@ function moveLeft() {
     drawBoard();
 }
 
+// Движение плиток вправо
 function moveRight() {
     saveState();
     let moved = false;
@@ -123,14 +122,13 @@ function moveRight() {
     drawBoard();
 }
 
+// Движение плиток вверх
 function moveUp() {
     saveState();
     let moved = false;
     for (let c = 0; c < size; c++) {
         let col = [];
-        for (let r = 0; r < size; r++) {
-            if (matrix[r][c] !== 0) col.push(matrix[r][c]);
-        }
+        for (let r = 0; r < size; r++) if (matrix[r][c] !== 0) col.push(matrix[r][c]);
         for (let i = 0; i < col.length - 1; i++) {
             if (col[i] === col[i + 1]) {
                 col[i] *= 2;
@@ -150,14 +148,13 @@ function moveUp() {
     drawBoard();
 }
 
+// Движение плиток вниз
 function moveDown() {
     saveState();
     let moved = false;
     for (let c = 0; c < size; c++) {
         let col = [];
-        for (let r = 0; r < size; r++) {
-            if (matrix[r][c] !== 0) col.push(matrix[r][c]);
-        }
+        for (let r = 0; r < size; r++) if (matrix[r][c] !== 0) col.push(matrix[r][c]);
         for (let i = col.length - 1; i > 0; i--) {
             if (col[i] === col[i - 1]) {
                 col[i] *= 2;
@@ -177,7 +174,7 @@ function moveDown() {
     drawBoard();
 }
 
-// Проверка окончания игры: нет пустых клеток и нет возможных слияний
+// Проверка окончания игры
 function checkGameOver() {
     for (let r = 0; r < size; r++) {
         for (let c = 0; c < size; c++) {
@@ -186,10 +183,40 @@ function checkGameOver() {
             if (r < size - 1 && matrix[r][c] === matrix[r + 1][c]) return false;
         }
     }
-    return true; // игры больше нет
+    return true;
 }
 
-// Обработка клавиатуры для движения плиток
+// Получение рекордов из localStorage
+function getLeaderboard() {
+    return JSON.parse(localStorage.getItem("leaderboard") || "[]");
+}
+
+// Сохранение рекорда
+function saveLeaderboard(name, score) {
+    const leaderboard = getLeaderboard();
+    leaderboard.push({
+        name: name || "Игрок",
+        score: score,
+        date: new Date().toLocaleString()
+    });
+    leaderboard.sort((a, b) => b.score - a.score);
+    localStorage.setItem("leaderboard", JSON.stringify(leaderboard.slice(0, 10)));
+    showLeaderboard();
+}
+
+// Отображение таблицы лидеров
+function showLeaderboard() {
+    leaderboardModal.classList.remove("hidden");
+    recordsTable.innerHTML = "<tr><th>Имя</th><th>Очки</th><th>Дата</th></tr>";
+    const leaderboard = getLeaderboard();
+    leaderboard.forEach(record => {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td>${record.name}</td><td>${record.score}</td><td>${record.date}</td>`;
+        recordsTable.appendChild(row);
+    });
+}
+
+// Обработчики событий клавиатуры
 document.addEventListener("keydown", (e) => {
     switch(e.key) {
         case "ArrowLeft": moveLeft(); break;
@@ -215,7 +242,7 @@ controls.querySelectorAll("button").forEach(btn => {
 // Кнопка Undo
 undoBtn.addEventListener("click", undo);
 
-// Кнопка "Начать заново"
+// Кнопка Начать заново
 restartBtn.addEventListener("click", () => {
     matrix = Array.from({ length: size }, () => Array(size).fill(0));
     score = 0;
@@ -225,7 +252,7 @@ restartBtn.addEventListener("click", () => {
     drawBoard();
 });
 
-// Кнопка "Начать заново" в модальном окне окончания игры
+// Начать заново в модальном окне
 restartGameBtn.addEventListener("click", () => {
     matrix = Array.from({ length: size }, () => Array(size).fill(0));
     score = 0;
@@ -233,6 +260,23 @@ restartGameBtn.addEventListener("click", () => {
     for (let i = 0; i < startTiles; i++) spawnTile();
     gameOverModal.classList.add("hidden");
     drawBoard();
+});
+
+// Сохранение рекорда после ввода имени
+saveScoreBtn.addEventListener("click", () => {
+    const name = playerNameInput.value.trim();
+    saveLeaderboard(name, score);
+    gameOverModal.querySelector("p").textContent = "Ваш рекорд сохранен!";
+    playerNameInput.classList.add("hidden");
+    saveScoreBtn.classList.add("hidden");
+});
+
+// Показ таблицы рекордов
+showLeaderboardBtn.addEventListener("click", showLeaderboard);
+
+// Закрытие таблицы рекордов
+closeLeaderboardBtn.addEventListener("click", () => {
+    leaderboardModal.classList.add("hidden");
 });
 
 // Отрисовка начального состояния
