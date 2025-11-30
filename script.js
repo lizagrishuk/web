@@ -1,5 +1,3 @@
-console.log("Игра 2048 — проект инициализирован");
-
 const board = document.getElementById("board");
 const scoreEl = document.getElementById("score");
 const undoBtn = document.getElementById("undo");
@@ -25,15 +23,19 @@ const startTiles = Math.floor(Math.random() * 2) + 2;
 
 // Отрисовка игрового поля
 function drawBoard() {
-    board.innerHTML = "";
+    while (board.firstChild) {
+        board.removeChild(board.firstChild);
+    }
+
     for (let r = 0; r < size; r++) {
         for (let c = 0; c < size; c++) {
             const cell = document.createElement("div");
             cell.classList.add("cell");
             if (matrix[r][c] !== 0) {
                 cell.textContent = matrix[r][c];
-                cell.setAttribute("data-value", matrix[r][c]); // добавляем атрибут для цветов
-                // Если плитка только что слилась
+                cell.setAttribute("data-value", matrix[r][c]);
+
+                // Анимация слияния плиток
                 if (matrix[r][c + 1] === 0 || matrix[r + 1]?.[c] === 0) {
                     cell.classList.add("merge");
                     setTimeout(() => cell.classList.remove("merge"), 200);
@@ -42,6 +44,7 @@ function drawBoard() {
             board.appendChild(cell);
         }
     }
+
     scoreEl.textContent = score;
 
     if (checkGameOver()) {
@@ -49,7 +52,7 @@ function drawBoard() {
     }
 }
 
-// Генерация новой плитки (2 или 4) в случайной пустой клетке
+// Генерация новой плитки
 function spawnTile() {
     let empty = [];
     for (let r = 0; r < size; r++) {
@@ -58,6 +61,7 @@ function spawnTile() {
         }
     }
     if (empty.length === 0) return;
+
     const pos = empty[Math.floor(Math.random() * empty.length)];
     matrix[pos.r][pos.c] = Math.random() < 0.9 ? 2 : 4;
 }
@@ -65,7 +69,7 @@ function spawnTile() {
 // Генерация начальных плиток
 for (let i = 0; i < startTiles; i++) spawnTile();
 
-// Сохраняем состояние для Undo
+// Сохранение состояния для Undo
 function saveState() {
     history.push({
         matrix: matrix.map(row => row.slice()),
@@ -74,7 +78,7 @@ function saveState() {
     if (history.length > 20) history.shift();
 }
 
-// Отмена хода
+// Undo
 function undo() {
     if (history.length === 0) return;
     const lastState = history.pop();
@@ -87,8 +91,10 @@ function undo() {
 function moveLeft() {
     saveState();
     let moved = false;
+
     for (let r = 0; r < size; r++) {
         let row = matrix[r].filter(v => v !== 0);
+
         for (let i = 0; i < row.length - 1; i++) {
             if (row[i] === row[i + 1]) {
                 row[i] *= 2;
@@ -97,11 +103,14 @@ function moveLeft() {
                 i++;
             }
         }
+
         row = row.filter(v => v !== 0);
         while (row.length < size) row.push(0);
+
         if (matrix[r].some((v, idx) => v !== row[idx])) moved = true;
         matrix[r] = row;
     }
+
     if (moved) spawnTile();
     drawBoard();
 }
@@ -110,8 +119,10 @@ function moveLeft() {
 function moveRight() {
     saveState();
     let moved = false;
+
     for (let r = 0; r < size; r++) {
         let row = matrix[r].filter(v => v !== 0);
+
         for (let i = row.length - 1; i > 0; i--) {
             if (row[i] === row[i - 1]) {
                 row[i] *= 2;
@@ -120,11 +131,14 @@ function moveRight() {
                 i--;
             }
         }
+
         row = row.filter(v => v !== 0);
         while (row.length < size) row.unshift(0);
+
         if (matrix[r].some((v, idx) => v !== row[idx])) moved = true;
         matrix[r] = row;
     }
+
     if (moved) spawnTile();
     drawBoard();
 }
@@ -133,9 +147,11 @@ function moveRight() {
 function moveUp() {
     saveState();
     let moved = false;
+
     for (let c = 0; c < size; c++) {
         let col = [];
         for (let r = 0; r < size; r++) if (matrix[r][c] !== 0) col.push(matrix[r][c]);
+
         for (let i = 0; i < col.length - 1; i++) {
             if (col[i] === col[i + 1]) {
                 col[i] *= 2;
@@ -144,13 +160,16 @@ function moveUp() {
                 i++;
             }
         }
+
         col = col.filter(v => v !== 0);
         while (col.length < size) col.push(0);
+
         for (let r = 0; r < size; r++) {
             if (matrix[r][c] !== col[r]) moved = true;
             matrix[r][c] = col[r];
         }
     }
+
     if (moved) spawnTile();
     drawBoard();
 }
@@ -159,9 +178,11 @@ function moveUp() {
 function moveDown() {
     saveState();
     let moved = false;
+
     for (let c = 0; c < size; c++) {
         let col = [];
         for (let r = 0; r < size; r++) if (matrix[r][c] !== 0) col.push(matrix[r][c]);
+
         for (let i = col.length - 1; i > 0; i--) {
             if (col[i] === col[i - 1]) {
                 col[i] *= 2;
@@ -170,13 +191,16 @@ function moveDown() {
                 i--;
             }
         }
+
         col = col.filter(v => v !== 0);
         while (col.length < size) col.unshift(0);
+
         for (let r = 0; r < size; r++) {
             if (matrix[r][c] !== col[r]) moved = true;
             matrix[r][c] = col[r];
         }
     }
+
     if (moved) spawnTile();
     drawBoard();
 }
@@ -193,12 +217,11 @@ function checkGameOver() {
     return true;
 }
 
-// Получение рекордов из localStorage
+// Получение и сохранение лидерборда
 function getLeaderboard() {
     return JSON.parse(localStorage.getItem("leaderboard") || "[]");
 }
 
-// Сохранение рекорда
 function saveLeaderboard(name, score) {
     const leaderboard = getLeaderboard();
     leaderboard.push({
@@ -214,17 +237,41 @@ function saveLeaderboard(name, score) {
 // Отображение таблицы лидеров
 function showLeaderboard() {
     leaderboardModal.classList.remove("hidden");
-    recordsTable.innerHTML = "<tr><th>Имя</th><th>Очки</th><th>Дата</th></tr>";
+
+    while (recordsTable.firstChild) {
+        recordsTable.removeChild(recordsTable.firstChild);
+    }
+
+    const headerRow = document.createElement("tr");
+    ["Имя", "Очки", "Дата"].forEach(text => {
+        const th = document.createElement("th");
+        th.textContent = text;
+        headerRow.appendChild(th);
+    });
+    recordsTable.appendChild(headerRow);
+
     const leaderboard = getLeaderboard();
     leaderboard.forEach(record => {
         const row = document.createElement("tr");
-        row.innerHTML = `<td>${record.name}</td><td>${record.score}</td><td>${record.date}</td>`;
+
+        const tdName = document.createElement("td");
+        tdName.textContent = record.name;
+        row.appendChild(tdName);
+
+        const tdScore = document.createElement("td");
+        tdScore.textContent = record.score;
+        row.appendChild(tdScore);
+
+        const tdDate = document.createElement("td");
+        tdDate.textContent = record.date;
+        row.appendChild(tdDate);
+
         recordsTable.appendChild(row);
     });
 }
 
-// Обработчики событий клавиатуры
-document.addEventListener("keydown", (e) => {
+// Обработчики событий
+document.addEventListener("keydown", e => {
     switch(e.key) {
         case "ArrowLeft": moveLeft(); break;
         case "ArrowRight": moveRight(); break;
@@ -233,11 +280,9 @@ document.addEventListener("keydown", (e) => {
     }
 });
 
-// Управление кнопками на мобильных устройствах
 controls.querySelectorAll("button").forEach(btn => {
     btn.addEventListener("click", () => {
-        const dir = btn.dataset.dir;
-        switch(dir) {
+        switch(btn.dataset.dir) {
             case "up": moveUp(); break;
             case "down": moveDown(); break;
             case "left": moveLeft(); break;
@@ -246,20 +291,9 @@ controls.querySelectorAll("button").forEach(btn => {
     });
 });
 
-// Кнопка Undo
 undoBtn.addEventListener("click", undo);
+restartBtn.addEventListener("click", restartGameBtn.click);
 
-// Кнопка Начать заново
-restartBtn.addEventListener("click", () => {
-    matrix = Array.from({ length: size }, () => Array(size).fill(0));
-    score = 0;
-    history = [];
-    for (let i = 0; i < startTiles; i++) spawnTile();
-    gameOverModal.classList.add("hidden");
-    drawBoard();
-});
-
-// Начать заново в модальном окне
 restartGameBtn.addEventListener("click", () => {
     matrix = Array.from({ length: size }, () => Array(size).fill(0));
     score = 0;
@@ -269,7 +303,6 @@ restartGameBtn.addEventListener("click", () => {
     drawBoard();
 });
 
-// Сохранение рекорда после ввода имени
 saveScoreBtn.addEventListener("click", () => {
     const name = playerNameInput.value.trim();
     saveLeaderboard(name, score);
@@ -278,13 +311,9 @@ saveScoreBtn.addEventListener("click", () => {
     saveScoreBtn.classList.add("hidden");
 });
 
-// Показ таблицы рекордов
 showLeaderboardBtn.addEventListener("click", showLeaderboard);
-
-// Закрытие таблицы рекордов
 closeLeaderboardBtn.addEventListener("click", () => {
     leaderboardModal.classList.add("hidden");
 });
 
-// Отрисовка начального состояния
 drawBoard();
