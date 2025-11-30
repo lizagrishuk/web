@@ -2,12 +2,48 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>2048</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2048 Game</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Игра 2048</h1>
-    <div id="board"></div>
+    <header>
+        <h1>Игра 2048</h1>
+        <div class="score-container">
+            <span>Счёт: </span><span id="score">0</span>
+        </div>
+    </header>
 
-    <script src="app.js"></script>
+    <main>
+        <div id="board" class="board"></div>
+
+        <div id="gameOver" class="modal hidden">
+            <p>Игра окончена!</p>
+            <input id="playerName" placeholder="Ваше имя">
+            <button id="saveScore">Сохранить результат</button>
+            <button id="restartGame">Начать заново</button>
+        </div>
+
+        <div id="leaderboard" class="hidden">
+            <h2>Топ-10 игроков</h2>
+            <table id="recordsTable"></table>
+            <button id="closeLeaderboard">Закрыть</button>
+        </div>
+
+        <div id="controls" class="mobile-controls hidden">
+            <button data-dir="up">▲</button>
+            <button data-dir="left">◀</button>
+            <button data-dir="right">▶</button>
+            <button data-dir="down">▼</button>
+        </div>
+    </main>
+
+    <footer>
+        <button id="undo">Отмена хода</button>
+        <button id="restart">Начать заново</button>
+        <button id="showLeaderboard">Таблица рекордов</button>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
