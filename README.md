@@ -26,6 +26,6 @@
 
 **Ссылки:**
 - Деплой: https://lizagrishuk.github.io/WEB2025Q26LB3/
-- Видеодемонстрация: 
+- Видеодемонстрация: https://drive.google.com/drive/folders/1W_xSzaBsRo5zP-Fejw71gvr8ZdN66FRm?usp=sharing 
 
 **Автор:** Грищук Елизавета Дмитриевна
