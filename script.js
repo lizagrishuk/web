@@ -194,6 +194,28 @@ function moveDown() {
     if (moved) spawnTile();
     drawBoard();
 }
+// Обработка клавиатуры
+document.addEventListener("keydown", (e) => {
+    switch(e.key) {
+        case "ArrowLeft": moveLeft(); break;
+        case "ArrowRight": moveRight(); break;
+        case "ArrowUp": moveUp(); break;
+        case "ArrowDown": moveDown(); break;
+    }
+});
+
+// Обработка клавиатуры на мобильных устройствах
+controls.querySelectorAll("button").forEach(btn => {
+    btn.addEventListener("click", () => {
+        const dir = btn.dataset.dir;
+        switch(dir) {
+            case "up": moveUp(); break;
+            case "down": moveDown(); break;
+            case "left": moveLeft(); break;
+            case "right": moveRight(); break;
+        }
+    });
+});
 
 // Отрисовка начального состояния поля
 drawBoard();
