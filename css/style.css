@@ -2,68 +2,71 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
-  background-color: #f2f4f8;
+  background: linear-gradient(to bottom, #e0f7fa, #ffffff);
   color: #333;
+  min-height: 100vh;
 }
 
-/* ===== Header ===== */
+/* Header */
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px;
+  padding: 16px 24px;
   background-color: #1976d2;
-  color: #fff;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
+  color: white;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 header h1 {
-  font-size: 22px;
+  font-size: 24px;
 }
 
 header button {
-  padding: 8px 14px;
+  padding: 8px 16px;
   border: none;
-  background-color: #fff;
+  border-radius: 8px;
+  background-color: white;
   color: #1976d2;
-  border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  font-weight: 600;
+  transition: 0.2s;
 }
 
 header button:hover {
   background-color: #e3e3e3;
 }
 
-/* ===== Main ===== */
+/* Main */
 main {
-  padding: 16px;
   max-width: 900px;
-  margin: 16px auto;
+  margin: 24px auto;
+  padding: 0 16px;
 }
 
-/* ===== Cities ===== */
+/* Cities */
 #cities {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
   margin-bottom: 16px;
 }
 
 #cities button {
-  padding: 6px 12px;
+  padding: 8px 14px;
+  border-radius: 8px;
   border: none;
   background-color: #1976d2;
   color: white;
-  border-radius: 6px;
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: 0.2s;
 }
 
 #cities button:hover {
@@ -74,74 +77,84 @@ main {
   background-color: #0d47a1;
 }
 
-/* ===== Weather ===== */
+/* Weather Cards */
 #weather {
-  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+#weather div {
+  display: flex;
+  align-items: center;
+  gap: 16px;
   padding: 16px;
   background-color: white;
   border-radius: 12px;
-  min-height: 140px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-.status {
-  color: gray;
-  font-style: italic;
+#weather img {
+  width: 50px;
+  height: 50px;
 }
 
-.error {
-  color: red;
-  font-size: 14px;
-  margin-bottom: 8px;
-}
-
-/* ===== Add City ===== */
+/* Add City */
 #addCity {
-  margin-top: 16px;
   padding: 16px;
   background-color: white;
   border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  margin-top: 24px;
 }
 
 #addCity input {
   width: 100%;
-  padding: 10px;
-  margin-bottom: 8px;
-  border-radius: 6px;
+  padding: 12px;
+  border-radius: 8px;
   border: 1px solid #ccc;
+  margin-bottom: 8px;
 }
 
 #suggestions {
   border: 1px solid #ccc;
-  border-radius: 6px;
+  border-radius: 8px;
   max-height: 120px;
   overflow-y: auto;
   margin-bottom: 8px;
 }
 
 #suggestions div {
-  padding: 6px;
+  padding: 8px;
   cursor: pointer;
+  transition: 0.2s;
 }
 
 #suggestions div:hover {
   background-color: #f0f0f0;
 }
 
-/* ===== Mobile ===== */
+.error {
+  color: red;
+  font-size: 14px;
+}
+
+/* Status */
+.status {
+  color: gray;
+  font-style: italic;
+}
+
+/* Mobile */
 @media (max-width: 600px) {
   header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px;
+    gap: 8px;
   }
 
-  header h1 {
-    font-size: 18px;
-  }
-
-  #cities {
-    gap: 6px;
+  #weather div {
+    flex-direction: row;
+    justify-content: space-between;
   }
 }

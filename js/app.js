@@ -1,5 +1,4 @@
-console.log('Загрузка приложения погоды');
-
+// Получение элементов DOM
 const weatherContainer = document.getElementById('weather');
 const addCitySection = document.getElementById('addCity');
 const cityInput = document.getElementById('cityInput');
@@ -7,12 +6,13 @@ const addCityBtn = document.getElementById('addCityBtn');
 const citiesContainer = document.getElementById('cities');
 const suggestionsContainer = document.getElementById('suggestions');
 const errorMessage = document.querySelector('#addCity .error');
+const refreshBtn = document.getElementById('refreshBtn');
 
 const STORAGE_KEY = 'weather_app_data';
 let cities = []; // список добавленных городов
 let currentCity = null; // текущий выбранный город
 
-// справочник городов с координатами
+// Справочник городов с координатами
 const cityCoordinates = {
   "Минск": { lat: 53.9, lon: 27.5667 },
   "Москва": { lat: 55.7558, lon: 37.6173 },
@@ -46,28 +46,75 @@ async function fetchWeather(latitude, longitude) {
   return response.json();
 }
 
-// Отображение прогноза на 3 дня
-function renderWeather(data) {
-  weatherContainer.innerHTML = '';
-  data.daily.time.slice(0, 3).forEach((date, index) => {
-    const dayElement = document.createElement('div');
-    dayElement.innerHTML = `
-      <h3>${date}</h3>
-      <p>Максимум: ${data.daily.temperature_2m_max[index]} °C</p>
-      <p>Минимум: ${data.daily.temperature_2m_min[index]} °C</p>
-    `;
-    weatherContainer.appendChild(dayElement);
-  });
-}
-
 // Показ состояния загрузки
 function showLoading(message = 'Загрузка...') {
-  weatherContainer.innerHTML = `<p class="status">${message}</p>`;
+  // Очищаем контейнер и создаем элемент статуса
+  weatherContainer.innerHTML = '';
+  const p = document.createElement('p');
+  p.className = 'status';
+  p.textContent = message;
+  weatherContainer.appendChild(p);
 }
 
 // Показ ошибки
 function showError(message = 'Ошибка загрузки данных') {
-  weatherContainer.innerHTML = `<p class="error">${message}</p>`;
+  // Очищаем контейнер и создаем элемент ошибки
+  weatherContainer.innerHTML = '';
+  const p = document.createElement('p');
+  p.className = 'error';
+  p.textContent = message;
+  weatherContainer.appendChild(p);
+}
+
+// Отображение прогноза на 3 дня с иконками
+function renderWeather(data) {
+  weatherContainer.innerHTML = ''; // очищаем контейнер
+
+  data.daily.time.slice(0, 3).forEach((date, index) => {
+    const maxTemp = data.daily.temperature_2m_max[index];
+    const minTemp = data.daily.temperature_2m_min[index];
+
+    // Выбор иконки по температуре
+    let icon = 'icons/sun.png';
+    if (maxTemp >= 25) icon = 'icons/sun.png';
+    else if (maxTemp >= 15 && maxTemp < 25) icon = 'icons/cloud.png';
+    else if (maxTemp < 15) icon = 'icons/rain.png';
+
+    // Создаем карточку дня
+    const dayElement = document.createElement('div');
+    dayElement.style.display = 'flex';
+    dayElement.style.alignItems = 'center';
+    dayElement.style.gap = '12px';
+    dayElement.style.marginBottom = '12px';
+
+    // Иконка
+    const iconImg = document.createElement('img');
+    iconImg.src = icon;
+    iconImg.alt = 'Погода';
+    iconImg.width = 40;
+    iconImg.height = 40;
+
+    // Контейнер с текстом
+    const textDiv = document.createElement('div');
+
+    const h3 = document.createElement('h3');
+    h3.textContent = date;
+
+    const pMax = document.createElement('p');
+    pMax.textContent = `Максимум: ${maxTemp} °C`;
+
+    const pMin = document.createElement('p');
+    pMin.textContent = `Минимум: ${minTemp} °C`;
+
+    textDiv.appendChild(h3);
+    textDiv.appendChild(pMax);
+    textDiv.appendChild(pMin);
+
+    dayElement.appendChild(iconImg);
+    dayElement.appendChild(textDiv);
+
+    weatherContainer.appendChild(dayElement);
+  });
 }
 
 // Отрисовка кнопок городов
@@ -90,7 +137,7 @@ async function loadCityWeather(cityName) {
   }
 
   currentCity = cityName; // сохраняем текущий город
-  saveData(); // сохраняем в localStorage
+  saveData();
   showLoading(`Загрузка погоды для ${cityName}...`);
 
   try {
@@ -98,7 +145,6 @@ async function loadCityWeather(cityName) {
     renderWeather(data);
   } catch (error) {
     showError('Ошибка загрузки данных');
-    console.error(error);
   }
 }
 
@@ -173,12 +219,10 @@ async function initApp() {
     saveData();
   } catch (error) {
     showError('Геолокация недоступна');
-    console.warn(error);
   }
 }
 
 // Кнопка "Обновить"
-const refreshBtn = document.getElementById('refreshBtn');
 refreshBtn.addEventListener('click', async () => {
   if (currentCity) {
     loadCityWeather(currentCity);
@@ -191,7 +235,6 @@ refreshBtn.addEventListener('click', async () => {
       renderWeather(data);
     } catch (error) {
       showError('Геолокация недоступна');
-      console.warn(error);
     }
   }
 });
