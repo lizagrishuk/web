@@ -1,50 +1,15 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <title>Магазин товаров</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>Прогноз погоды</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-  <header>
-    <h1>Магазин товаров</h1>
-  </header>
 
-  <main>
-    <section class="catalog">
-      <article class="product">
-        <h2>Товар 1</h2>
-        <p>Цена: 1000 ₽</p>
-        <button class="btn-add">Добавить в корзину</button>
-      </article>
-      <article class="product">
-        <h2>Товар 2</h2>
-        <p>Цена: 2000 ₽</p>
-        <button class="btn-add">Добавить в корзину</button>
-      </article>
-    </section>
+  <h1>Прогноз погоды</h1>
+  <p>Приложение загружается...</p>
 
-    <section class="cart">
-      <h2>Корзина</h2>
-      <ul id="cartItems"></ul>
-      <p id="cartCount">Товаров в корзине: 0</p>
-      <p id="cartTotal">Итого: 0 ₽</p>
-    </section>
-
-    <section class="order-form">
-      <h2>Оформление заказа</h2>
-      <form id="orderForm">
-        <input type="text" name="firstname" placeholder="Имя" required />
-        <input type="text" name="lastname" placeholder="Фамилия" required />
-        <input type="text" name="address" placeholder="Адрес доставки" required />
-        <input type="tel" name="phone" placeholder="Телефон" required />
-        <button type="submit">Создать заказ</button>
-      </form>
-      <p id="orderMessage"></p>
-    </section>
-  </main>
-
-  <script src="script.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
