@@ -193,3 +193,24 @@ async function initApp() {
 }
 
 initApp();
+
+// Кнопка "Обновить"
+const refreshBtn = document.getElementById('refreshBtn');
+refreshBtn.addEventListener('click', async () => {
+  if (currentCity) {
+    // Если выбран город из списка
+    loadCityWeather(currentCity);
+  } else {
+    // Если нет города — используем геолокацию
+    showLoading('Определение местоположения...');
+    try {
+      const coords = await getUserLocation();
+      showLoading('Загрузка погоды...');
+      const data = await fetchWeather(coords.latitude, coords.longitude);
+      renderWeather(data);
+    } catch (error) {
+      showError('Геолокация недоступна');
+      console.warn(error);
+    }
+  }
+});
