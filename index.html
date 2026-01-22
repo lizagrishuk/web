@@ -4,12 +4,42 @@
   <meta charset="UTF-8">
   <title>Прогноз погоды</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
+<header>
   <h1>Прогноз погоды</h1>
-  <p>Приложение загружается...</p>
+  <button id="refreshBtn">Обновить</button>
+</header>
 
-  <script src="js/app.js"></script>
+<main>
+
+  <!-- Список городов -->
+  <section id="cities">
+    <!-- Кнопки городов будут добавляться через JS -->
+  </section>
+
+  <!-- Прогноз погоды -->
+  <section id="weather">
+    <p class="status">Загрузка...</p>
+  </section>
+
+  <!-- Добавление города -->
+  <section id="addCity">
+    <input
+      type="text"
+      id="cityInput"
+      placeholder="Введите город"
+      autocomplete="off"
+    >
+    <div id="suggestions"></div>
+    <p class="error"></p>
+    <button id="addCityBtn">Добавить город</button>
+  </section>
+
+</main>
+
+<script src="js/app.js"></script>
 </body>
 </html>
