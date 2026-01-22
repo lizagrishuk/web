@@ -5,12 +5,11 @@ const addCitySection = document.getElementById('addCity');
 const cityInput = document.getElementById('cityInput');
 const addCityBtn = document.getElementById('addCityBtn');
 const citiesContainer = document.getElementById('cities');
+const suggestionsContainer = document.getElementById('suggestions');
+const errorMessage = document.querySelector('#addCity .error');
 
-let cities = []; // список городов с координатами
+let cities = []; // список добавленных городов
 
-/**
- * Простейший справочник городов с координатами (для теста)
- */
 const cityCoordinates = {
   "Минск": { lat: 53.9, lon: 27.5667 },
   "Москва": { lat: 55.7558, lon: 37.6173 },
@@ -20,13 +19,11 @@ const cityCoordinates = {
 };
 
 /**
- * Получение прогноза погоды
+ * Получение прогноза
  */
 async function fetchWeather(latitude, longitude) {
   const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,temperature_2m_min&timezone=auto`;
-
   const response = await fetch(url);
-
   if (!response.ok) throw new Error('Ошибка при загрузке погоды');
   return response.json();
 }
@@ -48,7 +45,7 @@ function renderWeather(data) {
 }
 
 /**
- * UI состояния
+ * Состояния интерфейса
  */
 function showLoading(message = 'Загрузка...') {
   weatherContainer.innerHTML = `<p class="status">${message}</p>`;
@@ -59,7 +56,7 @@ function showError(message = 'Ошибка загрузки данных') {
 }
 
 /**
- * Добавление кнопок городов
+ * Кнопки городов
  */
 function renderCityButtons() {
   citiesContainer.innerHTML = '';
@@ -80,7 +77,6 @@ async function loadCityWeather(cityName) {
     showError('Город не найден');
     return;
   }
-
   showLoading(`Загрузка погоды для ${cityName}...`);
   try {
     const data = await fetchWeather(coords.lat, coords.lon);
@@ -92,18 +88,45 @@ async function loadCityWeather(cityName) {
 }
 
 /**
+ * Автодополнение и валидация
+ */
+cityInput.addEventListener('input', () => {
+  const query = cityInput.value.trim().toLowerCase();
+  suggestionsContainer.innerHTML = '';
+  errorMessage.textContent = '';
+
+  if (!query) return;
+
+  const matches = Object.keys(cityCoordinates).filter(city =>
+    city.toLowerCase().includes(query)
+  );
+
+  matches.forEach(city => {
+    const div = document.createElement('div');
+    div.textContent = city;
+    div.onclick = () => {
+      cityInput.value = city;
+      suggestionsContainer.innerHTML = '';
+    };
+    suggestionsContainer.appendChild(div);
+  });
+});
+
+/**
  * Добавление города
  */
 addCityBtn.addEventListener('click', () => {
   const cityName = cityInput.value.trim();
   if (!cityCoordinates[cityName]) {
-    alert('Город не найден в базе');
+    errorMessage.textContent = 'Город не найден';
     return;
   }
   if (!cities.includes(cityName)) {
     cities.push(cityName);
     renderCityButtons();
     cityInput.value = '';
+    suggestionsContainer.innerHTML = '';
+    errorMessage.textContent = '';
   }
 });
 
@@ -113,8 +136,8 @@ addCityBtn.addEventListener('click', () => {
 function getUserLocation() {
   return new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
-      position => resolve(position.coords),
-      error => reject(error)
+      pos => resolve(pos.coords),
+      err => reject(err)
     );
   });
 }
