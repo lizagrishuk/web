@@ -1,6 +1,7 @@
 console.log('Загрузка приложения погоды');
 
 const weatherContainer = document.getElementById('weather');
+const addCitySection = document.getElementById('addCity');
 
 /**
  * Получение прогноза погоды по координатам
@@ -23,9 +24,7 @@ async function fetchWeather(latitude, longitude) {
 function renderWeather(data) {
   weatherContainer.innerHTML = '';
 
-  const days = data.daily.time.slice(0, 3);
-
-  days.forEach((date, index) => {
+  data.daily.time.slice(0, 3).forEach((date, index) => {
     const dayElement = document.createElement('div');
 
     dayElement.innerHTML = `
@@ -39,19 +38,33 @@ function renderWeather(data) {
 }
 
 /**
- * Тестовая загрузка погоды (Минск)
+ * Запрос геолокации
  */
-async function loadTestWeather() {
-  weatherContainer.innerHTML = '<p class="status">Загрузка погоды...</p>';
+function getUserLocation() {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(
+      position => resolve(position.coords),
+      error => reject(error)
+    );
+  });
+}
+
+/**
+ * Инициализация приложения
+ */
+async function initApp() {
+  weatherContainer.innerHTML = '<p class="status">Определение местоположения...</p>';
 
   try {
-    const data = await fetchWeather(53.9, 27.56);
+    const coords = await getUserLocation();
+    const data = await fetchWeather(coords.latitude, coords.longitude);
     renderWeather(data);
+    addCitySection.style.display = 'none';
   } catch (error) {
-    weatherContainer.innerHTML = '<p class="error">Ошибка загрузки данных</p>';
-    console.error(error);
+    weatherContainer.innerHTML = '<p class="status">Геолокация недоступна</p>';
+    addCitySection.style.display = 'block';
+    console.warn('Геолокация отклонена');
   }
 }
 
-loadTestWeather();
-
+initApp();
