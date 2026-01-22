@@ -9,9 +9,10 @@ const suggestionsContainer = document.getElementById('suggestions');
 const errorMessage = document.querySelector('#addCity .error');
 
 const STORAGE_KEY = 'weather_app_data';
-let cities = [];
-let currentCity = null;
+let cities = []; // список добавленных городов
+let currentCity = null; // текущий выбранный город
 
+// справочник городов с координатами
 const cityCoordinates = {
   "Минск": { lat: 53.9, lon: 27.5667 },
   "Москва": { lat: 55.7558, lon: 37.6173 },
@@ -20,9 +21,7 @@ const cityCoordinates = {
   "Берлин": { lat: 52.52, lon: 13.405 }
 };
 
-/**
- * LocalStorage
- */
+// Сохранение данных в localStorage
 function saveData() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify({
     cities,
@@ -30,6 +29,7 @@ function saveData() {
   }));
 }
 
+// Загрузка данных из localStorage
 function loadData() {
   const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
   if (data) {
@@ -38,9 +38,7 @@ function loadData() {
   }
 }
 
-/**
- * Получение прогноза
- */
+// Получение прогноза по координатам
 async function fetchWeather(latitude, longitude) {
   const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,temperature_2m_min&timezone=auto`;
   const response = await fetch(url);
@@ -48,9 +46,7 @@ async function fetchWeather(latitude, longitude) {
   return response.json();
 }
 
-/**
- * Отображение прогноза (3 дня)
- */
+// Отображение прогноза на 3 дня
 function renderWeather(data) {
   weatherContainer.innerHTML = '';
   data.daily.time.slice(0, 3).forEach((date, index) => {
@@ -64,20 +60,17 @@ function renderWeather(data) {
   });
 }
 
-/**
- * UI состояния
- */
+// Показ состояния загрузки
 function showLoading(message = 'Загрузка...') {
   weatherContainer.innerHTML = `<p class="status">${message}</p>`;
 }
 
+// Показ ошибки
 function showError(message = 'Ошибка загрузки данных') {
   weatherContainer.innerHTML = `<p class="error">${message}</p>`;
 }
 
-/**
- * Кнопки городов
- */
+// Отрисовка кнопок городов
 function renderCityButtons() {
   citiesContainer.innerHTML = '';
   cities.forEach(city => {
@@ -88,18 +81,18 @@ function renderCityButtons() {
   });
 }
 
-/**
- * Загрузка погоды для выбранного города
- */
+// Загрузка погоды для выбранного города
 async function loadCityWeather(cityName) {
   const coords = cityCoordinates[cityName];
   if (!coords) {
     showError('Город не найден');
     return;
   }
-  currentCity = cityName;
-  saveData();
+
+  currentCity = cityName; // сохраняем текущий город
+  saveData(); // сохраняем в localStorage
   showLoading(`Загрузка погоды для ${cityName}...`);
+
   try {
     const data = await fetchWeather(coords.lat, coords.lon);
     renderWeather(data);
@@ -109,9 +102,7 @@ async function loadCityWeather(cityName) {
   }
 }
 
-/**
- * Автодополнение и валидация
- */
+// Автодополнение городов
 cityInput.addEventListener('input', () => {
   const query = cityInput.value.trim().toLowerCase();
   suggestionsContainer.innerHTML = '';
@@ -134,9 +125,7 @@ cityInput.addEventListener('input', () => {
   });
 });
 
-/**
- * Добавление города
- */
+// Добавление города
 addCityBtn.addEventListener('click', () => {
   const cityName = cityInput.value.trim();
   if (!cityCoordinates[cityName]) {
@@ -153,9 +142,7 @@ addCityBtn.addEventListener('click', () => {
   errorMessage.textContent = '';
 });
 
-/**
- * Геолокация
- */
+// Геолокация
 function getUserLocation() {
   return new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
@@ -165,9 +152,7 @@ function getUserLocation() {
   });
 }
 
-/**
- * Инициализация
- */
+// Инициализация приложения
 async function initApp() {
   loadData();
   addCitySection.style.display = 'block';
@@ -188,20 +173,16 @@ async function initApp() {
     saveData();
   } catch (error) {
     showError('Геолокация недоступна');
-    console.warn('Геолокация отклонена или ошибка загрузки', error);
+    console.warn(error);
   }
 }
-
-initApp();
 
 // Кнопка "Обновить"
 const refreshBtn = document.getElementById('refreshBtn');
 refreshBtn.addEventListener('click', async () => {
   if (currentCity) {
-    // Если выбран город из списка
     loadCityWeather(currentCity);
   } else {
-    // Если нет города — используем геолокацию
     showLoading('Определение местоположения...');
     try {
       const coords = await getUserLocation();
@@ -214,3 +195,6 @@ refreshBtn.addEventListener('click', async () => {
     }
   }
 });
+
+// Запуск приложения
+initApp();
