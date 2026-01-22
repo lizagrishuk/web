@@ -38,6 +38,20 @@ function renderWeather(data) {
 }
 
 /**
+ * Показ состояния загрузки
+ */
+function showLoading(message = 'Загрузка...') {
+  weatherContainer.innerHTML = `<p class="status">${message}</p>`;
+}
+
+/**
+ * Показ ошибки
+ */
+function showError(message = 'Ошибка загрузки данных') {
+  weatherContainer.innerHTML = `<p class="error">${message}</p>`;
+}
+
+/**
  * Запрос геолокации
  */
 function getUserLocation() {
@@ -53,17 +67,18 @@ function getUserLocation() {
  * Инициализация приложения
  */
 async function initApp() {
-  weatherContainer.innerHTML = '<p class="status">Определение местоположения...</p>';
+  showLoading('Определение местоположения...');
 
   try {
     const coords = await getUserLocation();
+    showLoading('Загрузка погоды...');
     const data = await fetchWeather(coords.latitude, coords.longitude);
     renderWeather(data);
     addCitySection.style.display = 'none';
   } catch (error) {
-    weatherContainer.innerHTML = '<p class="status">Геолокация недоступна</p>';
+    showError('Геолокация недоступна');
     addCitySection.style.display = 'block';
-    console.warn('Геолокация отклонена');
+    console.warn('Геолокация отклонена или ошибка загрузки', error);
   }
 }
 
