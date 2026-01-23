@@ -1,0 +1,159 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background: linear-gradient(to bottom, #e0f7fa, #ffffff);
+  color: #333;
+  min-height: 100vh;
+}
+
+/* Header */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background-color: #1976d2;
+  color: white;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+header h1 {
+  font-size: 24px;
+}
+
+header button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  background-color: white;
+  color: #1976d2;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+header button:hover {
+  background-color: #e3e3e3;
+}
+
+/* Main */
+main {
+  max-width: 900px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
+
+/* Cities */
+#cities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+#cities button {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  background-color: #1976d2;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+#cities button:hover {
+  background-color: #0d47a1;
+}
+
+#cities button.active {
+  background-color: #0d47a1;
+}
+
+/* Weather Cards */
+#weather {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+#weather div {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+#weather img {
+  width: 50px;
+  height: 50px;
+}
+
+/* Add City */
+#addCity {
+  padding: 16px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  margin-top: 24px;
+}
+
+#addCity input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-bottom: 8px;
+}
+
+#suggestions {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  max-height: 120px;
+  overflow-y: auto;
+  margin-bottom: 8px;
+}
+
+#suggestions div {
+  padding: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+#suggestions div:hover {
+  background-color: #f0f0f0;
+}
+
+.error {
+  color: red;
+  font-size: 14px;
+}
+
+.status {
+  color: gray;
+  font-style: italic;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  #weather div {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
