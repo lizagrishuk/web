@@ -3,7 +3,7 @@
 
 **Ссылки:**  
 - Деплой: https://lizagrishuk.github.io/web/
-- Видеодемонстрация: https://drive.google.com/drive/folders/1bgqhl35Ew6ErJB0nug2xwYZ30HlK5vsU?usp=sharing
+- Видеодемонстрация: https://drive.google.com/drive/folders/1bgqhl35Ew6ErJB0nug2xwYZ30HlK5vsU?usp=drive_link (при записи экрана на пк, к сожалению, не видно всплывающих окон, поэтому в начале не видно, как я нажимаю поделиться местоположением. этот запрос виден на мобильной версии)
 
 ---
 
